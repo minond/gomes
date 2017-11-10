@@ -1,17 +1,5 @@
 package gomes
 
-/**
- * game := TicTacToe()
- *
- * game.Turn(0, 0)
- * game.Turn(1, 0)
- * game.Turn(2, 0)
- * game.Turn(1, 1)
- * game.Turn(2, 1)
- * game.Turn(1, 2)
- *
- * fmt.Println(game)
- */
 import (
 	"errors"
 	"fmt"
@@ -60,6 +48,16 @@ var (
 	}
 )
 
+// game := TicTacToe()
+//
+// game.Turn(0, 0)
+// game.Turn(1, 0)
+// game.Turn(2, 0)
+// game.Turn(1, 1)
+// game.Turn(2, 1)
+// game.Turn(1, 2)
+//
+// fmt.Println(game)
 func TicTacToe() (game tttGameState) {
 	game.board[0][0] = tttEmptyPiece
 	game.board[0][1] = tttEmptyPiece

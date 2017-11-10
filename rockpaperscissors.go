@@ -1,4 +1,4 @@
-package main
+package gomes
 
 import (
 	"errors"
@@ -48,6 +48,12 @@ var (
 	}
 )
 
+// game := RockPaperScissors()
+//
+// game.Turn(rpsOne, rpsRock)
+// game.Turn(rpsTwo, rpsPaper)
+//
+// fmt.Println(game)
 func RockPaperScissors() (game rpsGameState) {
 	game.winner = rpsNone
 	game.one = rpsEmpty
@@ -112,13 +118,4 @@ func calculateRpcWinner(optOne, optTwo rpsOption) rpsPlayer {
 	} else {
 		return rpsTwo
 	}
-}
-
-func main() {
-	game := RockPaperScissors()
-
-	game.Turn(rpsOne, rpsRock)
-	game.Turn(rpsTwo, rpsPaper)
-
-	fmt.Println(game)
 }
