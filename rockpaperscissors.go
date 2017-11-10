@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type rpsPlayer int
@@ -15,7 +16,8 @@ type rpsGameState struct {
 }
 
 const (
-	rpsNone rpsPlayer = -1
+	rpsNone rpsPlayer = -2
+	rpsTie  rpsPlayer = -1
 	rpsOne  rpsPlayer = 0
 	rpsTwo  rpsPlayer = 1
 
@@ -29,6 +31,20 @@ var (
 	rpsOtherPlayer = map[rpsPlayer]rpsPlayer{
 		rpsOne: rpsTwo,
 		rpsTwo: rpsOne,
+	}
+
+	rpsOptions = map[rpsOption]string{
+		rpsRock:     "Rock",
+		rpsPaper:    "Paper",
+		rpsScissors: "Scissors",
+		rpsEmpty:    "None",
+	}
+
+	rpsPlayers = map[rpsPlayer]string{
+		rpsOne:  "Player 1",
+		rpsTwo:  "Player 2",
+		rpsTie:  "Tie",
+		rpsNone: "None",
 	}
 )
 
@@ -76,9 +92,17 @@ func (game rpsGameState) Scissors() rpsOption {
 	return rpsScissors
 }
 
+func (game rpsGameState) String() string {
+	return strings.TrimSpace(fmt.Sprintf(`%v vs %v (%v)`,
+		rpsOptions[game.one],
+		rpsOptions[game.two],
+		rpsPlayers[game.winner],
+	))
+}
+
 func calculateRpcWinner(optOne, optTwo rpsOption) rpsPlayer {
 	if optOne == optTwo {
-		return rpsNone
+		return rpsTie
 	} else if optOne == rpsRock && optTwo == rpsScissors {
 		return rpsOne
 	} else if optOne == rpsScissors && optTwo == rpsPaper {
