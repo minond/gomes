@@ -101,6 +101,14 @@ func (game *tttGameState) Turn(x, y int) (bool, error) {
 	return false, nil
 }
 
+func (game tttGameState) String() string {
+	return strings.TrimSpace(fmt.Sprintf(tttTmpl,
+		game.board[0][0], game.board[0][1], game.board[0][2],
+		game.board[1][0], game.board[1][1], game.board[1][2],
+		game.board[2][0], game.board[2][1], game.board[2][2],
+	))
+}
+
 func (board tttBoard) samePieceInCoors(p tttPiece, coors ...[2]int) bool {
 	for _, coor := range coors {
 		if board[coor[0]][coor[1]] != p {
@@ -109,12 +117,4 @@ func (board tttBoard) samePieceInCoors(p tttPiece, coors ...[2]int) bool {
 	}
 
 	return true
-}
-
-func (game tttGameState) String() string {
-	return strings.TrimSpace(fmt.Sprintf(tttTmpl,
-		game.board[0][0], game.board[0][1], game.board[0][2],
-		game.board[1][0], game.board[1][1], game.board[1][2],
-		game.board[2][0], game.board[2][1], game.board[2][2],
-	))
 }
