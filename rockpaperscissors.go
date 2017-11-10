@@ -86,6 +86,14 @@ func (game *rpsGameState) Turn(player rpsPlayer, option rpsOption) (bool, error)
 	return false, nil
 }
 
+func (game *rpsGameState) PlayerOneTurn(option rpsOption) (bool, error) {
+	return game.Turn(rpsOne, option)
+}
+
+func (game *rpsGameState) PlayerTwoTurn(option rpsOption) (bool, error) {
+	return game.Turn(rpsTwo, option)
+}
+
 func (game rpsGameState) Rock() rpsOption {
 	return rpsRock
 }
