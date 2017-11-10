@@ -7,16 +7,16 @@ import (
 func TestBoardStartsOutWithXAsTheNextPiece(t *testing.T) {
 	game := TicTacToe()
 
-	if game.next != xPiece {
-		t.Errorf("Expecting `%v` as the next piece but found `%v`", xPiece, game.next)
+	if game.next != tttXPiece {
+		t.Errorf("Expecting `%v` as the next piece but found `%v`", tttXPiece, game.next)
 	}
 }
 
 func TestBoardStartsOutWithNoWinner(t *testing.T) {
 	game := TicTacToe()
 
-	if game.winner != emptyPiece {
-		t.Errorf("Expecting `%v` as the next piece but found `%v`", xPiece, game.next)
+	if game.winner != tttEmptyPiece {
+		t.Errorf("Expecting `%v` as the next piece but found `%v`", tttXPiece, game.next)
 	}
 }
 
@@ -25,7 +25,7 @@ func TestBoardStartsOutWithJustEmptyPieces(t *testing.T) {
 
 	for y := 0; y < 3; y++ {
 		for x := 0; x < 3; x++ {
-			if game.board[y][x] != emptyPiece {
+			if game.board[y][x] != tttEmptyPiece {
 				t.Errorf("Found non-empty piece on [%v, %v]", x, y)
 			}
 		}
@@ -67,7 +67,7 @@ func TestWinnerIsSet(t *testing.T) {
 	game.Turn(2, 1)
 	game.Turn(1, 2)
 
-	if game.winner != oPiece {
+	if game.winner != tttOPiece {
 		t.Error("Expected `o` to be the winner")
 	}
 }

@@ -21,80 +21,82 @@ import (
 type tttPiece string
 type tttBoard [3][3]tttPiece
 
-type ticTacToeGameState struct {
+type tttGameState struct {
 	board  tttBoard `json:"board"`
 	next   tttPiece `json:"next"`
 	winner tttPiece `json:"winner"`
 }
 
 const (
-	emptyPiece tttPiece = " "
-	oPiece     tttPiece = "o"
-	xPiece     tttPiece = "x"
+	tttEmptyPiece tttPiece = " "
+	tttOPiece     tttPiece = "o"
+	tttXPiece     tttPiece = "x"
+
+	tttTmpl = `
+		-------------
+		| %v | %v | %v |
+		-------------
+		| %v | %v | %v |
+		-------------
+		| %v | %v | %v |
+		-------------`
 )
 
-const tttTmpl = `
--------------
-| %v | %v | %v |
--------------
-| %v | %v | %v |
--------------
-| %v | %v | %v |
--------------`
+var (
+	tttNextPiece = map[tttPiece]tttPiece{
+		tttXPiece: tttOPiece,
+		tttOPiece: tttXPiece,
+	}
 
-var nextPiece = map[tttPiece]tttPiece{
-	xPiece: oPiece,
-	oPiece: xPiece,
-}
+	tttWinningCoordinates = [][][2]int{
+		[][2]int{[2]int{0, 0}, [2]int{1, 0}, [2]int{2, 0}}, // Row 1
+		[][2]int{[2]int{0, 1}, [2]int{1, 1}, [2]int{2, 1}}, // Row 2
+		[][2]int{[2]int{0, 2}, [2]int{1, 2}, [2]int{2, 2}}, // Row 3
+		[][2]int{[2]int{0, 0}, [2]int{0, 1}, [2]int{0, 2}}, // Column 1
+		[][2]int{[2]int{1, 0}, [2]int{1, 1}, [2]int{1, 2}}, // Column 2
+		[][2]int{[2]int{2, 0}, [2]int{2, 1}, [2]int{2, 2}}, // Column 3
+		[][2]int{[2]int{0, 0}, [2]int{1, 1}, [2]int{2, 2}}, // Top left to bottom right
+		[][2]int{[2]int{2, 0}, [2]int{1, 1}, [2]int{0, 2}}, // Top right to bottom left
+	}
+)
 
-var winningCoordinates = [][][2]int{
-	[][2]int{[2]int{0, 0}, [2]int{1, 0}, [2]int{2, 0}}, // Row 1
-	[][2]int{[2]int{0, 1}, [2]int{1, 1}, [2]int{2, 1}}, // Row 2
-	[][2]int{[2]int{0, 2}, [2]int{1, 2}, [2]int{2, 2}}, // Row 3
-	[][2]int{[2]int{0, 0}, [2]int{0, 1}, [2]int{0, 2}}, // Column 1
-	[][2]int{[2]int{1, 0}, [2]int{1, 1}, [2]int{1, 2}}, // Column 2
-	[][2]int{[2]int{2, 0}, [2]int{2, 1}, [2]int{2, 2}}, // Column 3
-	[][2]int{[2]int{0, 0}, [2]int{1, 1}, [2]int{2, 2}}, // Top left to bottom right
-	[][2]int{[2]int{2, 0}, [2]int{1, 1}, [2]int{0, 2}}, // Top right to bottom left
-}
+func TicTacToe() (game tttGameState) {
+	game.board[0][0] = tttEmptyPiece
+	game.board[0][1] = tttEmptyPiece
+	game.board[0][2] = tttEmptyPiece
+	game.board[1][0] = tttEmptyPiece
+	game.board[1][1] = tttEmptyPiece
+	game.board[1][2] = tttEmptyPiece
+	game.board[2][0] = tttEmptyPiece
+	game.board[2][1] = tttEmptyPiece
+	game.board[2][2] = tttEmptyPiece
 
-func TicTacToe() (game ticTacToeGameState) {
-	game.board[0][0] = emptyPiece
-	game.board[0][1] = emptyPiece
-	game.board[0][2] = emptyPiece
-	game.board[1][0] = emptyPiece
-	game.board[1][1] = emptyPiece
-	game.board[1][2] = emptyPiece
-	game.board[2][0] = emptyPiece
-	game.board[2][1] = emptyPiece
-	game.board[2][2] = emptyPiece
-
-	game.next = xPiece
-	game.winner = emptyPiece
+	game.next = tttXPiece
+	game.winner = tttEmptyPiece
 
 	return
 }
 
-func (game *ticTacToeGameState) Turn(x, y int) (bool, error) {
-	if game.winner != emptyPiece {
+func (game *tttGameState) Turn(x, y int) (bool, error) {
+	if game.winner != tttEmptyPiece {
 		return false, errors.New("There's already a winner!")
 	}
 
-	if game.board[y][x] != emptyPiece {
+	if game.board[y][x] != tttEmptyPiece {
 		return false, fmt.Errorf("Tic Tac Toe board already has a piece on [%v, %v] coordinates", x, y)
 	}
 
 	game.board[y][x] = game.next
 
 	// Winner??
-	for _, coors := range winningCoordinates {
+	for _, coors := range tttWinningCoordinates {
 		if game.board.samePieceInCoors(game.next, coors...) {
 			game.winner = game.next
 			return true, nil
 		}
 	}
 
-	game.next = nextPiece[game.next]
+	game.next = tttNextPiece[game.next]
 
 	return false, nil
 }
@@ -109,7 +111,7 @@ func (board tttBoard) samePieceInCoors(p tttPiece, coors ...[2]int) bool {
 	return true
 }
 
-func (game ticTacToeGameState) String() string {
+func (game tttGameState) String() string {
 	return strings.TrimSpace(fmt.Sprintf(tttTmpl,
 		game.board[0][0], game.board[0][1], game.board[0][2],
 		game.board[1][0], game.board[1][1], game.board[1][2],
