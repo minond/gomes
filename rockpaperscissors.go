@@ -10,7 +10,8 @@ type rpsOption int
 
 type rpsGameState struct {
 	winner rpsPlayer
-	turns  []map[rpsPlayer]rpsOption
+	one    rpsOption
+	two    rpsOption
 }
 
 const (
@@ -18,6 +19,7 @@ const (
 	rpsOne  rpsPlayer = 0
 	rpsTwo  rpsPlayer = 1
 
+	rpsEmpty    rpsOption = -1
 	rpsRock     rpsOption = 0
 	rpsPaper    rpsOption = 1
 	rpsScissors rpsOption = 2
@@ -32,8 +34,8 @@ var (
 
 func RockPaperScissors() (game rpsGameState) {
 	game.winner = rpsNone
-	game.turns = make([]map[rpsPlayer]rpsOption, 0)
-	game.turns = append(game.turns, map[rpsPlayer]rpsOption{})
+	game.one = rpsEmpty
+	game.two = rpsEmpty
 	return game
 }
 
@@ -42,26 +44,22 @@ func (game *rpsGameState) Turn(player rpsPlayer, option rpsOption) (bool, error)
 		return false, errors.New("Invalid player")
 	}
 
-	// if len(game.turns) == 0 {
-	// 	game.turns = make([]map[rpsPlayer]rpsOption, 0)
-	// 	game.turns = append(game.turns, map[rpsPlayer]rpsOption{player: option})
-	// } else {
-	// 	game.turns
-	// }
-
-	curr := game.turns[len(game.turns)-1]
-	turn, set := curr[player]
-
-	if set == true {
-		return false, errors.New("Player has already taken a turn")
+	if option == rpsEmpty {
+		return false, errors.New("Invalid option")
 	}
 
-	curr[player] = option
+	switch player {
+	case rpsOne:
+		game.one = option
 
-	// Has the other player taken this turn?
-	otherOption, set := curr[rpsOtherPlayer[player]]
+	case rpsTwo:
+		game.two = option
+	}
 
-	fmt.Println(len(game.turns))
+	if game.one != rpsEmpty && game.two != rpsEmpty {
+		game.winner = calculateRpcWinner(game.one, game.two)
+		return true, nil
+	}
 
 	return false, nil
 }
@@ -78,11 +76,25 @@ func (game rpsGameState) Scissors() rpsOption {
 	return rpsScissors
 }
 
+func calculateRpcWinner(optOne, optTwo rpsOption) rpsPlayer {
+	if optOne == optTwo {
+		return rpsNone
+	} else if optOne == rpsRock && optTwo == rpsScissors {
+		return rpsOne
+	} else if optOne == rpsScissors && optTwo == rpsPaper {
+		return rpsOne
+	} else if optOne == rpsPaper && optTwo == rpsRock {
+		return rpsOne
+	} else {
+		return rpsTwo
+	}
+}
+
 func main() {
 	game := RockPaperScissors()
 
 	game.Turn(rpsOne, rpsRock)
-	game.Turn(rpsOne, rpsRock)
+	game.Turn(rpsTwo, rpsPaper)
 
 	fmt.Println(game)
 }
